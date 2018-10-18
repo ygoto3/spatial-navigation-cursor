@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<style>
+:root {
+  --transition-duration: .2s;
+  --transition-easing: ease-out;
+}
+
+div.block {
+  background-color: gray;
+  height: 100px;
+  width: 100%;
+}
+
+div.block + div.block {
+  margin-top: 5px;
+}
+
+.__spatial-navigation-cursor__ {
+  outline: 5px solid black;
+  transition: width var(--transition-duration) var(--transition-easing), height var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing);
+}
+</style>
+<title></title>
+<body>
+  <main>
+    <div class="block focused"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+    <div class="block"></div>
+  </main>
+</body>
+<script type="module">
+import CursorManager from './index.js';
+
+const root = document.body;
+const cursorManager = new CursorManager({
+  root,
+  focusSelector: '.focused',
+});
+cursorManager.move();
+
+window.addEventListener('keydown', (e) => {
+  e.preventDefault();
+  switch (e.key) {
+    case 'ArrowUp':
+    case 'ArrowDown': {
+      const focused = root.firstElementChild.querySelector('.focused');
+      if (e.key === 'ArrowUp') {
+        const prev = focused.previousElementSibling;
+        if (!prev) return;
+        prev.classList.add('focused');
+        focused.classList.remove('focused');
+      } else {
+        const next = focused.nextElementSibling;
+        if (!next) return;
+        next.classList.add('focused');
+        focused.classList.remove('focused');
+      }
+      break;
+    }
+  }
+  cursorManager.move();
+});
+  
+</script>
+</html>

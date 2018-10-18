@@ -35,6 +35,63 @@
 </nav>
 
 <div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="spatial-navigation-cursor">spatial-navigation-cursor</h1><p>A simple spatial navigation cursor library</p>
+<p><img src="./assets/screenshot.gif" alt="spatial-navigation-cursor screenshot"></p>
+<p>You can see how it works <a href="https://ygoto3.github.io/spatial-navigation-cursor/demo/">here</a>.</p>
+<h2 id="install">Install</h2><pre><code class="lang-sh"><code class="source-code prettyprint">$ npm i spatial-navigation-cursor</code>
+</code></pre>
+<h1 id="usage">Usage</h1><p>Give an element &quot;focused&quot; class.</p>
+<pre><code class="lang-html"><code class="source-code prettyprint">&lt;main&gt;
+  &lt;div class=&quot;block focused&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;block&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;block&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;block&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;block&quot;&gt;&lt;/div&gt;
+&lt;/main&gt;</code>
+</code></pre>
+<p><code>.__spatial-navigation-cursor__</code> is a class selector for the cursor.  Write css code for the selector.</p>
+<pre><code class="lang-css"><code class="source-code prettyprint">:root {
+  --transition-duration: .2s;
+  --transition-easing: ease-out;
+}
+
+.__spatial-navigation-cursor__ {
+  outline: 5px solid black;
+  transition: width var(--transition-duration) var(--transition-easing), height var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing);
+}</code>
+</code></pre>
+<p>Instantiate a new cursor manager.  You can tell the cursor manager to move the cursor when you change focused elements.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">import CursorManager from &apos;spatial-navigation-cursor&apos;;
+
+const cursorManager = new CursorManager({
+  root: document.body,
+  focusSelector: &apos;.focused&apos;,
+});
+
+cursorManager.move();
+
+window.addEventListener(&apos;keydown&apos;, (e) =&gt; {
+  e.preventDefault();
+  switch (e.key) {
+    case &apos;ArrowUp&apos;:
+    case &apos;ArrowDown&apos;: {
+      const focused = document.querySelector(&apos;.focused&apos;);
+      if (e.key === &apos;ArrowUp&apos;) {
+        const prev = focused.previousElementSibling;
+        if (!prev) return;
+        prev.classList.add(&apos;focused&apos;);
+        focused.classList.remove(&apos;focused&apos;);
+      } else {
+        const next = focused.nextElementSibling;
+        if (!next) return;
+        next.classList.add(&apos;focused&apos;);
+        focused.classList.remove(&apos;focused&apos;);
+      }
+      break;
+    }
+  }
+  cursorManager.move();
+});</code>
+</code></pre>
 </div>
 </div>
 
