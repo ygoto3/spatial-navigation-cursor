@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">spatial-navigation-cursor/index.js | spatial-navigation-cursor</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/ygoto3/spatial-navigation-cursor.git"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/spatial-navigation-cursor/index.js~CursorManager.html">CursorManager</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">spatial-navigation-cursor/index.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">// @flow
+
+/*::
+type cursorManager$Rect = {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+};
+*/
+
+export default class CursorManager {
+  /*::
+  root_: HTMLElement;
+  cursor_: HTMLElement;
+  focusSelector_: string;
+  viewHeight_: number;
+  */
+
+  /**
+   * @param {Object} props
+   * @param {HTMLElement} props.root an HTML element to use as its root
+   * @param {string} props.focusSelector a css selector to identify the focused element
+   */
+  constructor({ root, focusSelector, }/*: {
+    root: HTMLElement,
+    focusSelector: string,
+  }*/) {
+    /**
+     * @type {HTMLElement}
+     * @access private
+     */
+    this.root_ = root;
+
+    /**
+     * @type {string}
+     * @access private
+     */
+    this.focusSelector_ = focusSelector;
+
+    /**
+     * @type {HTMLElement}
+     * @access private
+     */
+    this.cursor_ = document.createElement(&apos;div&apos;);
+
+    /**
+     * @type {string}
+     * @access private
+     */
+    this.viewHeight_ = window.innerHeight;
+
+    this.styleCursor_();
+    this.appendToRoot_();
+  }
+
+  /**
+   * Move the cursor
+   */
+  move()/*: void*/ {
+    const focused = this.root_.querySelector(this.focusSelector_);
+    if (!focused) {
+      this.hideCursor_();
+      return;
+    } else {
+      this.showCursor_();
+    }
+
+    const r = getAbsoluteElementRect(focused);
+    this.scrollIntoView_(r);
+    this.moveCursorTo_(r);
+  }
+
+  /**
+   * Get the cursor element
+   * @return {HTMLElement} the cursor element
+   */
+  getCursor()/*: HTMLElement*/ {
+    return this.cursor_;
+  }
+
+  /**
+   * Scroll into view of destination rect
+   * @access private
+   * @param {cursorManager$Rect} rect the destination rect
+   * @param {number} rect.top
+   * @param {number} rect.left
+   * @param {number} rect.width
+   * @param {number} rect.height
+   */
+  scrollIntoView_(rect/*: cursorManager$Rect*/)/*: void*/ {
+    const pageXOffset = window.pageXOffset;
+    window.scroll({
+      left: pageXOffset,
+      top: rect.top - (window.innerHeight * 0.5) + (rect.height * 0.5),
+      behavior: &apos;smooth&apos;,
+    });
+  }
+
+  /**
+   * Move the cursor to the destination rect
+   * @access private
+   * @param {cursorManager$Rect} rect the destination rect to scroll to
+   * @param {number} rect.top
+   * @param {number} rect.left
+   * @param {number} rect.width
+   * @param {number} rect.height
+   */
+  moveCursorTo_(rect/*: cursorManager$Rect*/)/*: void*/ {
+    this.cursor_.style.transform = `translate3d(${ rect.left }px, ${ rect.top }px, 0)`;
+    this.cursor_.style.width = `${ rect.width }px`;
+    this.cursor_.style.height = `${ rect.height }px`;
+  }
+
+  /**
+   * Style the cursor
+   * @access private
+   */
+  styleCursor_()/*: void*/ {
+    this.cursor_.classList.add(&apos;__spatial-navigation-cursor__&apos;);
+    this.cursor_.style.position = &apos;absolute&apos;;
+    this.cursor_.style.top = &apos;0&apos;;
+    this.cursor_.style.left = &apos;0&apos;;
+    this.hideCursor_();
+  }
+
+  /**
+   * Hide the cursor
+   * @access private
+   */
+  hideCursor_()/*: void*/ {
+    this.cursor_.style.display = &apos;none&apos;;
+  }
+
+  /**
+   * Show the cursor
+   * @access private
+   */
+  showCursor_()/*: void*/ {
+    this.cursor_.style.display = &apos;&apos;;
+  }
+
+  /**
+   * Append the cursor to the root
+   * @access private
+   */
+  appendToRoot_()/*: void*/ {
+    this.root_.appendChild(this.cursor_);
+  }
+}
+
+/**
+ * Get an element rect with its absolute location
+ * @param {HTMLElement} elem an HTML element
+ * @return {cursorManager$Rect} the element rect with its absolute location
+ */
+function getAbsoluteElementRect(elem/*: HTMLElement*/)/* cursorManager$Rect*/ {
+  const r = elem.getBoundingClientRect();
+  return { left: r.left + window.pageXOffset, top: r.top + window.pageYOffset, width: r.width, height: r.height };
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
