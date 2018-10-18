@@ -4,6 +4,8 @@ A simple spatial navigation cursor library
 
 ![spatial-navigation-cursor screenshot](./assets/screenshot.gif)
 
+You can see how it works [here](https://ygoto3.github.io/spatial-navigation-cursor/demo/).
+
 ## Install
 
 ```sh

@@ -11,6 +11,7 @@
     "lint": "eslint index.js index.test.js",
     "doc": "esdoc",
     "gen-flow-files": "flow gen-flow-files ./index.js > ./index.js.flow",
+    "build:demo": "mkdir -p ./docs/demo && cp ./demo.html ./docs/demo/index.html && cp ./index.js ./docs/demo",
     "deploy:doc": "gh-pages -d docs"
   },
   "devDependencies": {
@@ -21,6 +22,7 @@
     "eslint": "^5.7.0",
     "esm": "^3.0.84",
     "flow-bin": "^0.83.0",
+    "gh-pages": "^2.0.1",
     "jsdom": "^12.2.0"
   }
 }
