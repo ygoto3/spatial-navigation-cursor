@@ -1,9 +1,17 @@
 {
   "name": "spatial-navigation-cursor",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "main": "index.js",
+  "files": [
+    "index.js",
+    "index.js.flow"
+  ],
   "repository": "https://github.com/ygoto3/spatial-navigation-cursor.git",
-  "author": "ygoto3 <my.important.apes@gmail.com>",
+  "author": "Yusuke Goto <my.important.apes@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/ygoto3/spatial-navigation-cursor/issues"
+  },
+  "homepage": "https://ygoto3.github.io/spatial-navigation-cursor/",
   "license": "MIT",
   "scripts": {
     "test": "ava -v",
