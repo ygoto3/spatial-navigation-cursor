@@ -1,0 +1,12 @@
+[ignore]
+.*/node_modules/.*
+
+[include]
+
+[libs]
+types/declarations
+
+[options]
+module.file_ext=.js
+module.file_ext=.mjs
+module.name_mapper='ava' -> '<PROJECT_ROOT>/types/mappers/ava.js.flow'

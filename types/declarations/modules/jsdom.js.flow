@@ -1,0 +1,10 @@
+declare interface jsdom$JSDOM {
+  constructor(html: string): jsdom$JSDOM;
+  window: window;
+}
+
+declare module 'jsdom' {
+  declare module.exports: {
+    JSDOM: Class<jsdom$JSDOM>;
+  }
+}

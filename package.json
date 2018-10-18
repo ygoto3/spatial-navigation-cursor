@@ -1,0 +1,26 @@
+{
+  "name": "spatial-navigation-cursor",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/ygoto3/spatial-navigation-cursor.git",
+  "author": "ygoto3 <my.important.apes@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "ava -v",
+    "type": "flow",
+    "lint": "eslint index.js index.test.js",
+    "doc": "esdoc",
+    "gen-flow-files": "flow gen-flow-files ./index.js > ./index.js.flow",
+    "deploy:doc": "gh-pages -d docs"
+  },
+  "devDependencies": {
+    "ava": "1.0.0-rc.1",
+    "esdoc": "^1.1.0",
+    "esdoc-importpath-plugin": "^1.0.2",
+    "esdoc-standard-plugin": "^1.0.0",
+    "eslint": "^5.7.0",
+    "esm": "^3.0.84",
+    "flow-bin": "^0.83.0",
+    "jsdom": "^12.2.0"
+  }
+}
