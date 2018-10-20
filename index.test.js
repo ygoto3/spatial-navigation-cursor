@@ -15,12 +15,14 @@ test.before(() => {
     observe() { observe() }
     disconnect() { disconnect() }
   }
+  global.getComputedStyle = () => ({ borderLeftWidth: '2px', borderTopWidth: '2px' });
 });
 
 test.after(() => {
   delete global.window;
   delete global.document;
   delete global.MutationObserver;
+  delete global.getComputedStyle;
 });
 
 test('cursor', t => {
