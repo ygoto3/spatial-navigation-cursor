@@ -1,13 +1,14 @@
 {
-  "coverage": "93.33%",
-  "expectCount": 15,
-  "actualCount": 14,
+  "coverage": "91.66%",
+  "expectCount": 24,
+  "actualCount": 22,
   "files": {
     "spatial-navigation-cursor/index.js": {
-      "expectCount": 15,
-      "actualCount": 14,
+      "expectCount": 24,
+      "actualCount": 22,
       "undocumentLines": [
-        12
+        12,
+        229
       ]
     }
   }

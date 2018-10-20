@@ -50,9 +50,9 @@ import CursorManager from './index.js';
 const root = document.body;
 const cursorManager = new CursorManager({
   root,
-  focusSelector: '.focused',
+  focusClassName: 'focused',
 });
-cursorManager.move();
+cursorManager.start();
 
 window.addEventListener('keydown', (e) => {
   e.preventDefault();
@@ -74,7 +74,6 @@ window.addEventListener('keydown', (e) => {
       break;
     }
   }
-  cursorManager.move();
 });
   
 </script>

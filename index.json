@@ -3,7 +3,7 @@
     "__docId__": 0,
     "kind": "file",
     "name": "spatial-navigation-cursor/index.js",
-    "content": "// @flow\n\n/*::\ntype cursorManager$Rect = {\n  top: number;\n  left: number;\n  width: number;\n  height: number;\n};\n*/\n\nexport default class CursorManager {\n  /*::\n  root_: HTMLElement;\n  cursor_: HTMLElement;\n  focusSelector_: string;\n  viewHeight_: number;\n  */\n\n  /**\n   * @param {Object} props\n   * @param {HTMLElement} props.root an HTML element to use as its root\n   * @param {string} props.focusSelector a css selector to identify the focused element\n   */\n  constructor({ root, focusSelector, }/*: {\n    root: HTMLElement,\n    focusSelector: string,\n  }*/) {\n    /**\n     * @type {HTMLElement}\n     * @access private\n     */\n    this.root_ = root;\n\n    /**\n     * @type {string}\n     * @access private\n     */\n    this.focusSelector_ = focusSelector;\n\n    /**\n     * @type {HTMLElement}\n     * @access private\n     */\n    this.cursor_ = document.createElement('div');\n\n    /**\n     * @type {string}\n     * @access private\n     */\n    this.viewHeight_ = window.innerHeight;\n\n    this.styleCursor_();\n    this.appendToRoot_();\n  }\n\n  /**\n   * Move the cursor\n   */\n  move()/*: void*/ {\n    const focused = this.root_.querySelector(this.focusSelector_);\n    if (!focused) {\n      this.hideCursor_();\n      return;\n    } else {\n      this.showCursor_();\n    }\n\n    const r = getAbsoluteElementRect(focused);\n    this.scrollIntoView_(r);\n    this.moveCursorTo_(r);\n  }\n\n  /**\n   * Get the cursor element\n   * @return {HTMLElement} the cursor element\n   */\n  getCursor()/*: HTMLElement*/ {\n    return this.cursor_;\n  }\n\n  /**\n   * Scroll into view of destination rect\n   * @access private\n   * @param {cursorManager$Rect} rect the destination rect\n   * @param {number} rect.top\n   * @param {number} rect.left\n   * @param {number} rect.width\n   * @param {number} rect.height\n   */\n  scrollIntoView_(rect/*: cursorManager$Rect*/)/*: void*/ {\n    const pageXOffset = window.pageXOffset;\n    window.scroll({\n      left: pageXOffset,\n      top: rect.top - (window.innerHeight * 0.5) + (rect.height * 0.5),\n      behavior: 'smooth',\n    });\n  }\n\n  /**\n   * Move the cursor to the destination rect\n   * @access private\n   * @param {cursorManager$Rect} rect the destination rect to scroll to\n   * @param {number} rect.top\n   * @param {number} rect.left\n   * @param {number} rect.width\n   * @param {number} rect.height\n   */\n  moveCursorTo_(rect/*: cursorManager$Rect*/)/*: void*/ {\n    this.cursor_.style.transform = `translate3d(${ rect.left }px, ${ rect.top }px, 0)`;\n    this.cursor_.style.width = `${ rect.width }px`;\n    this.cursor_.style.height = `${ rect.height }px`;\n  }\n\n  /**\n   * Style the cursor\n   * @access private\n   */\n  styleCursor_()/*: void*/ {\n    this.cursor_.classList.add('__spatial-navigation-cursor__');\n    this.cursor_.style.position = 'absolute';\n    this.cursor_.style.top = '0';\n    this.cursor_.style.left = '0';\n    this.hideCursor_();\n  }\n\n  /**\n   * Hide the cursor\n   * @access private\n   */\n  hideCursor_()/*: void*/ {\n    this.cursor_.style.display = 'none';\n  }\n\n  /**\n   * Show the cursor\n   * @access private\n   */\n  showCursor_()/*: void*/ {\n    this.cursor_.style.display = '';\n  }\n\n  /**\n   * Append the cursor to the root\n   * @access private\n   */\n  appendToRoot_()/*: void*/ {\n    this.root_.appendChild(this.cursor_);\n  }\n}\n\n/**\n * Get an element rect with its absolute location\n * @param {HTMLElement} elem an HTML element\n * @return {cursorManager$Rect} the element rect with its absolute location\n */\nfunction getAbsoluteElementRect(elem/*: HTMLElement*/)/* cursorManager$Rect*/ {\n  const r = elem.getBoundingClientRect();\n  return { left: r.left + window.pageXOffset, top: r.top + window.pageYOffset, width: r.width, height: r.height };\n}\n",
+    "content": "// @flow\n\n/*::\ntype cursorManager$Rect = {\n  top: number;\n  left: number;\n  width: number;\n  height: number;\n};\n*/\n\nexport default class CursorManager {\n  /*::\n  root_: HTMLElement;\n  cursor_: HTMLElement;\n  focused_: ?HTMLElement;\n  focusClassName_: string;\n  viewHeight_: number;\n  observer_: MutationObserver;\n  */\n\n  /**\n   * @param {Object} props\n   * @param {HTMLElement} props.root an HTML element to use as its root\n   * @param {string} props.focusClassName a css class name to identify the focused element\n   */\n  constructor({ root, focusClassName }/*: {\n    root: HTMLElement,\n    focusClassName: string,\n  }*/) {\n    /**\n     * @type {HTMLElement}\n     * @access private\n     */\n    this.root_ = root;\n\n    /**\n     * @type {string}\n     * @access private\n     */\n    this.focusClassName_ = focusClassName;\n\n    /**\n     * @type {HTMLElement}\n     * @access private\n     */\n    this.cursor_ = document.createElement('div');\n\n    /**\n     * @type {string}\n     * @access private\n     */\n    this.viewHeight_ = window.innerHeight;\n  }\n\n  /**\n   * Start the manager\n   */\n  start()/*: void*/ {\n    this.styleCursor_();\n    this.appendToRoot_();\n    this.observeFocus_();\n    this.focus();\n  }\n\n  /**\n   * Stop the manager\n   */\n  stop()/*: void*/ {\n    this.removeFromRoot_();\n    this.disconnectFocus_();\n  }\n\n  /**\n   * Focus on the element with the cursor\n   */\n  focus()/*: void*/ {\n    if (!this.focused_ || this.cursor_.style.display === 'none') {\n      this.place();\n    } else {\n      this.move();\n    }\n  }\n\n  /**\n   * Place the cursor\n   */\n  place()/*: void*/ {\n    const focused = this.focused_ || document.querySelector(`.${ this.focusClassName_ }`);\n    if (!focused) return;\n\n    const origTransitionDuration = this.cursor_.style.transitionDuration;\n    this.cursor_.style.transitionDuration = '0';\n    const r = getAbsoluteElementRect(focused);\n    this.scrollIntoView_(r);\n    this.resizeCursorTo_(r);\n    this.moveCursorTo_(r);\n    this.showCursor_();\n    this.cursor_.style.transitionDuration = origTransitionDuration;\n  }\n\n  /**\n   * Move the cursor\n   */\n  move()/*: void*/ {\n    const focused = this.focused_ || document.querySelector(`.${ this.focusClassName_ }`);\n    if (!focused) {\n      this.hideCursor_();\n      return;\n    } else {\n      this.showCursor_();\n    }\n\n    const r = getAbsoluteElementRect(focused);\n    this.scrollIntoView_(r);\n    this.resizeCursorTo_(r);\n    this.moveCursorTo_(r);\n  }\n\n  /**\n   * Get the cursor element\n   * @return {HTMLElement} the cursor element\n   */\n  getCursor()/*: HTMLElement*/ {\n    return this.cursor_;\n  }\n\n  /**\n   * Scroll into view of destination rect\n   * @access private\n   * @param {cursorManager$Rect} rect the destination rect\n   * @param {number} rect.top\n   * @param {number} rect.left\n   * @param {number} rect.width\n   * @param {number} rect.height\n   */\n  scrollIntoView_(rect/*: cursorManager$Rect*/)/*: void*/ {\n    const left = window.pageXOffset;\n    window.scroll({\n      left,\n      top: rect.top - (window.innerHeight * 0.5) + (rect.height * 0.5),\n      behavior: 'smooth',\n    });\n  }\n\n  /**\n   * Move the cursor to the destination rect\n   * @access private\n   * @param {cursorManager$Rect} rect the destination rect to scroll to\n   * @param {number} rect.top\n   * @param {number} rect.left\n   * @param {number} rect.width\n   * @param {number} rect.height\n   */\n  moveCursorTo_(rect/*: cursorManager$Rect*/)/*: void*/ {\n    this.cursor_.style.transform = `translate3d(${ rect.left }px, ${ rect.top }px, 0)`;\n  }\n\n  /**\n   * Move the cursor to the destination rect\n   * @access private\n   * @param {cursorManager$Rect} rect the destination rect to scroll to\n   * @param {number} rect.top\n   * @param {number} rect.left\n   * @param {number} rect.width\n   * @param {number} rect.height\n   */\n  resizeCursorTo_(rect/*: cursorManager$Rect*/)/*: void*/ {\n    this.cursor_.style.width = `${ rect.width }px`;\n    this.cursor_.style.height = `${ rect.height }px`;\n  }\n\n  /**\n   * Style the cursor\n   * @access private\n   */\n  styleCursor_()/*: void*/ {\n    this.cursor_.classList.add('__spatial-navigation-cursor__');\n    this.cursor_.style.position = 'absolute';\n    this.cursor_.style.top = '0';\n    this.cursor_.style.left = '0';\n    this.hideCursor_();\n  }\n\n  /**\n   * Hide the cursor\n   * @access private\n   */\n  hideCursor_()/*: void*/ {\n    this.cursor_.style.display = 'none';\n  }\n\n  /**\n   * Show the cursor\n   * @access private\n   */\n  showCursor_()/*: void*/ {\n    this.cursor_.style.display = '';\n  }\n\n  /**\n   * Append the cursor to the root\n   * @access private\n   */\n  appendToRoot_()/*: void*/ {\n    this.root_.appendChild(this.cursor_);\n  }\n\n  /**\n   * Append the cursor to the root\n   * @access private\n   */\n  removeFromRoot_()/*: void*/ {\n    this.root_.removeChild(this.cursor_);\n  }\n\n  /**\n   * Observer the change of focused elements\n   * @access private\n   */\n  observeFocus_() {\n    const observer = this.observer_ = new MutationObserver((mutationRecords) => {\n      for (let mutation of mutationRecords) {\n        if (\n          mutation.type !== 'attributes' ||\n          mutation.attributeName !== 'class' ||\n          !(mutation.target/*: any*/).classList.contains(this.focusClassName_)\n        ) continue;\n        this.focused_ = ((mutation.target/*: any*/)/*: HTMLElement*/);\n        this.focus();\n        break;\n      }\n    });\n    observer.observe(this.root_, {\n      attributes: true,\n      subtree: true,\n    });\n  }\n\n  /**\n   * Stop Observering the change of focused elements\n   * @access private\n   */\n  disconnectFocus_() {\n    this.observer_.disconnect();\n  }\n}\n\n/**\n * Get an element rect with its absolute location\n * @param {HTMLElement} elem an HTML element\n * @return {cursorManager$Rect} the element rect with its absolute location\n */\nfunction getAbsoluteElementRect(elem/*: HTMLElement*/)/* cursorManager$Rect*/ {\n  const r = elem.getBoundingClientRect();\n  return { left: r.left + window.pageXOffset, top: r.top + window.pageYOffset, width: r.width, height: r.height };\n}\n",
     "static": true,
     "longname": "/Users/a12915/workspace/spatial-navigation-cursor/index.js",
     "access": "public",
@@ -37,7 +37,7 @@
     "longname": "spatial-navigation-cursor/index.js~CursorManager#constructor",
     "access": "public",
     "description": "",
-    "lineNumber": 25,
+    "lineNumber": 27,
     "params": [
       {
         "nullable": null,
@@ -66,8 +66,8 @@
         ],
         "spread": false,
         "optional": false,
-        "name": "props.focusSelector",
-        "description": "a css selector to identify the focused element"
+        "name": "props.focusClassName",
+        "description": "a css class name to identify the focused element"
       }
     ]
   },
@@ -80,7 +80,7 @@
     "longname": "spatial-navigation-cursor/index.js~CursorManager#root_",
     "access": "private",
     "description": "",
-    "lineNumber": 33,
+    "lineNumber": 35,
     "type": {
       "nullable": null,
       "types": [
@@ -93,13 +93,13 @@
   {
     "__docId__": 4,
     "kind": "member",
-    "name": "focusSelector_",
+    "name": "focusClassName_",
     "memberof": "spatial-navigation-cursor/index.js~CursorManager",
     "static": false,
-    "longname": "spatial-navigation-cursor/index.js~CursorManager#focusSelector_",
+    "longname": "spatial-navigation-cursor/index.js~CursorManager#focusClassName_",
     "access": "private",
     "description": "",
-    "lineNumber": 39,
+    "lineNumber": 41,
     "type": {
       "nullable": null,
       "types": [
@@ -118,7 +118,7 @@
     "longname": "spatial-navigation-cursor/index.js~CursorManager#cursor_",
     "access": "private",
     "description": "",
-    "lineNumber": 45,
+    "lineNumber": 47,
     "type": {
       "nullable": null,
       "types": [
@@ -137,7 +137,7 @@
     "longname": "spatial-navigation-cursor/index.js~CursorManager#viewHeight_",
     "access": "private",
     "description": "",
-    "lineNumber": 51,
+    "lineNumber": 53,
     "type": {
       "nullable": null,
       "types": [
@@ -150,6 +150,66 @@
   {
     "__docId__": 7,
     "kind": "method",
+    "name": "start",
+    "memberof": "spatial-navigation-cursor/index.js~CursorManager",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "spatial-navigation-cursor/index.js~CursorManager#start",
+    "access": "public",
+    "description": "Start the manager",
+    "lineNumber": 59,
+    "params": [],
+    "return": null
+  },
+  {
+    "__docId__": 8,
+    "kind": "method",
+    "name": "stop",
+    "memberof": "spatial-navigation-cursor/index.js~CursorManager",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "spatial-navigation-cursor/index.js~CursorManager#stop",
+    "access": "public",
+    "description": "Stop the manager",
+    "lineNumber": 69,
+    "params": [],
+    "return": null
+  },
+  {
+    "__docId__": 9,
+    "kind": "method",
+    "name": "focus",
+    "memberof": "spatial-navigation-cursor/index.js~CursorManager",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "spatial-navigation-cursor/index.js~CursorManager#focus",
+    "access": "public",
+    "description": "Focus on the element with the cursor",
+    "lineNumber": 77,
+    "params": [],
+    "return": null
+  },
+  {
+    "__docId__": 10,
+    "kind": "method",
+    "name": "place",
+    "memberof": "spatial-navigation-cursor/index.js~CursorManager",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "spatial-navigation-cursor/index.js~CursorManager#place",
+    "access": "public",
+    "description": "Place the cursor",
+    "lineNumber": 88,
+    "params": [],
+    "return": null
+  },
+  {
+    "__docId__": 11,
+    "kind": "method",
     "name": "move",
     "memberof": "spatial-navigation-cursor/index.js~CursorManager",
     "generator": false,
@@ -158,12 +218,12 @@
     "longname": "spatial-navigation-cursor/index.js~CursorManager#move",
     "access": "public",
     "description": "Move the cursor",
-    "lineNumber": 60,
+    "lineNumber": 105,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 8,
+    "__docId__": 12,
     "kind": "method",
     "name": "getCursor",
     "memberof": "spatial-navigation-cursor/index.js~CursorManager",
@@ -173,7 +233,7 @@
     "longname": "spatial-navigation-cursor/index.js~CursorManager#getCursor",
     "access": "public",
     "description": "Get the cursor element",
-    "lineNumber": 78,
+    "lineNumber": 124,
     "return": {
       "nullable": null,
       "types": [
@@ -185,7 +245,7 @@
     "params": []
   },
   {
-    "__docId__": 9,
+    "__docId__": 13,
     "kind": "method",
     "name": "scrollIntoView_",
     "memberof": "spatial-navigation-cursor/index.js~CursorManager",
@@ -195,7 +255,7 @@
     "longname": "spatial-navigation-cursor/index.js~CursorManager#scrollIntoView_",
     "access": "private",
     "description": "Scroll into view of destination rect",
-    "lineNumber": 91,
+    "lineNumber": 137,
     "params": [
       {
         "nullable": null,
@@ -251,7 +311,7 @@
     "return": null
   },
   {
-    "__docId__": 10,
+    "__docId__": 14,
     "kind": "method",
     "name": "moveCursorTo_",
     "memberof": "spatial-navigation-cursor/index.js~CursorManager",
@@ -261,7 +321,7 @@
     "longname": "spatial-navigation-cursor/index.js~CursorManager#moveCursorTo_",
     "access": "private",
     "description": "Move the cursor to the destination rect",
-    "lineNumber": 109,
+    "lineNumber": 155,
     "params": [
       {
         "nullable": null,
@@ -317,7 +377,73 @@
     "return": null
   },
   {
-    "__docId__": 11,
+    "__docId__": 15,
+    "kind": "method",
+    "name": "resizeCursorTo_",
+    "memberof": "spatial-navigation-cursor/index.js~CursorManager",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "spatial-navigation-cursor/index.js~CursorManager#resizeCursorTo_",
+    "access": "private",
+    "description": "Move the cursor to the destination rect",
+    "lineNumber": 168,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "cursorManager$Rect"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "rect",
+        "description": "the destination rect to scroll to"
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "rect.top",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "rect.left",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "rect.width",
+        "description": ""
+      },
+      {
+        "nullable": null,
+        "types": [
+          "number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "rect.height",
+        "description": ""
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 16,
     "kind": "method",
     "name": "styleCursor_",
     "memberof": "spatial-navigation-cursor/index.js~CursorManager",
@@ -327,12 +453,12 @@
     "longname": "spatial-navigation-cursor/index.js~CursorManager#styleCursor_",
     "access": "private",
     "description": "Style the cursor",
-    "lineNumber": 119,
+    "lineNumber": 177,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 12,
+    "__docId__": 17,
     "kind": "method",
     "name": "hideCursor_",
     "memberof": "spatial-navigation-cursor/index.js~CursorManager",
@@ -342,12 +468,12 @@
     "longname": "spatial-navigation-cursor/index.js~CursorManager#hideCursor_",
     "access": "private",
     "description": "Hide the cursor",
-    "lineNumber": 131,
+    "lineNumber": 189,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 13,
+    "__docId__": 18,
     "kind": "method",
     "name": "showCursor_",
     "memberof": "spatial-navigation-cursor/index.js~CursorManager",
@@ -357,12 +483,12 @@
     "longname": "spatial-navigation-cursor/index.js~CursorManager#showCursor_",
     "access": "private",
     "description": "Show the cursor",
-    "lineNumber": 139,
+    "lineNumber": 197,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 14,
+    "__docId__": 19,
     "kind": "method",
     "name": "appendToRoot_",
     "memberof": "spatial-navigation-cursor/index.js~CursorManager",
@@ -372,12 +498,74 @@
     "longname": "spatial-navigation-cursor/index.js~CursorManager#appendToRoot_",
     "access": "private",
     "description": "Append the cursor to the root",
-    "lineNumber": 147,
+    "lineNumber": 205,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 15,
+    "__docId__": 20,
+    "kind": "method",
+    "name": "removeFromRoot_",
+    "memberof": "spatial-navigation-cursor/index.js~CursorManager",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "spatial-navigation-cursor/index.js~CursorManager#removeFromRoot_",
+    "access": "private",
+    "description": "Append the cursor to the root",
+    "lineNumber": 213,
+    "params": [],
+    "return": null
+  },
+  {
+    "__docId__": 21,
+    "kind": "method",
+    "name": "observeFocus_",
+    "memberof": "spatial-navigation-cursor/index.js~CursorManager",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "spatial-navigation-cursor/index.js~CursorManager#observeFocus_",
+    "access": "private",
+    "description": "Observer the change of focused elements",
+    "lineNumber": 221,
+    "params": [],
+    "return": null
+  },
+  {
+    "__docId__": 22,
+    "kind": "member",
+    "name": "focused_",
+    "memberof": "spatial-navigation-cursor/index.js~CursorManager",
+    "static": false,
+    "longname": "spatial-navigation-cursor/index.js~CursorManager#focused_",
+    "access": "public",
+    "description": null,
+    "lineNumber": 229,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 23,
+    "kind": "method",
+    "name": "disconnectFocus_",
+    "memberof": "spatial-navigation-cursor/index.js~CursorManager",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "spatial-navigation-cursor/index.js~CursorManager#disconnectFocus_",
+    "access": "private",
+    "description": "Stop Observering the change of focused elements",
+    "lineNumber": 244,
+    "params": [],
+    "return": null
+  },
+  {
+    "__docId__": 24,
     "kind": "function",
     "name": "getAbsoluteElementRect",
     "memberof": "spatial-navigation-cursor/index.js",
@@ -390,7 +578,7 @@
     "importPath": "spatial-navigation-cursor",
     "importStyle": null,
     "description": "Get an element rect with its absolute location",
-    "lineNumber": 157,
+    "lineNumber": 254,
     "params": [
       {
         "nullable": null,
@@ -415,17 +603,17 @@
   },
   {
     "kind": "index",
-    "content": "# spatial-navigation-cursor\n\nA simple spatial navigation cursor library\n\n![spatial-navigation-cursor screenshot](./assets/screenshot.gif)\n\nYou can see how it works [here](https://ygoto3.github.io/spatial-navigation-cursor/demo/).\n\n## Install\n\n```sh\n$ npm i spatial-navigation-cursor\n```\n\n# Usage\n\nGive an element \"focused\" class.\n\n```html\n<main>\n  <div class=\"block focused\"></div>\n  <div class=\"block\"></div>\n  <div class=\"block\"></div>\n  <div class=\"block\"></div>\n  <div class=\"block\"></div>\n</main>\n```\n\n`.__spatial-navigation-cursor__` is a class selector for the cursor.  Write css code for the selector.\n\n```css\n:root {\n  --transition-duration: .2s;\n  --transition-easing: ease-out;\n}\n\n.__spatial-navigation-cursor__ {\n  outline: 5px solid black;\n  transition: width var(--transition-duration) var(--transition-easing), height var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing);\n}\n```\n\nInstantiate a new cursor manager.  You can tell the cursor manager to move the cursor when you change focused elements.\n\n```js\nimport CursorManager from 'spatial-navigation-cursor';\n\nconst cursorManager = new CursorManager({\n  root: document.body,\n  focusSelector: '.focused',\n});\n\ncursorManager.move();\n\nwindow.addEventListener('keydown', (e) => {\n  e.preventDefault();\n  switch (e.key) {\n    case 'ArrowUp':\n    case 'ArrowDown': {\n      const focused = document.querySelector('.focused');\n      if (e.key === 'ArrowUp') {\n        const prev = focused.previousElementSibling;\n        if (!prev) return;\n        prev.classList.add('focused');\n        focused.classList.remove('focused');\n      } else {\n        const next = focused.nextElementSibling;\n        if (!next) return;\n        next.classList.add('focused');\n        focused.classList.remove('focused');\n      }\n      break;\n    }\n  }\n  cursorManager.move();\n});\n```\n",
+    "content": "# spatial-navigation-cursor\n\nA simple spatial navigation cursor library\n\n![spatial-navigation-cursor screenshot](./assets/screenshot.gif)\n\nYou can see how it works [here](https://ygoto3.github.io/spatial-navigation-cursor/demo/).\n\n## Install\n\n```sh\n$ npm i spatial-navigation-cursor\n```\n\n## Usage\n\nGive an element \"focused\" class name.  (You can use any other class name if you want.)\n\n```html\n<main>\n  <div class=\"block focused\"></div>\n  <div class=\"block\"></div>\n  <div class=\"block\"></div>\n  <div class=\"block\"></div>\n  <div class=\"block\"></div>\n</main>\n```\n\n`.__spatial-navigation-cursor__` is a class selector for the cursor.  Write css code for the selector.\n\n```css\n:root {\n  --transition-duration: .2s;\n  --transition-easing: ease-out;\n}\n\n.__spatial-navigation-cursor__ {\n  outline: 5px solid black;\n  transition: width var(--transition-duration) var(--transition-easing), height var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing);\n}\n```\n\nInstantiate a new cursor manager and start it.  When you give an element the focus class name, the cursor manager automatically moves the cursor to the element.\n\n```js\nimport CursorManager from 'spatial-navigation-cursor';\n\nconst cursorManager = new CursorManager({\n  root: document.body,\n  focusClassName: 'focused',\n});\n\ncursorManager.start();\n\nwindow.addEventListener('keydown', (e) => {\n  e.preventDefault();\n  switch (e.key) {\n    case 'ArrowUp':\n    case 'ArrowDown': {\n      const focused = document.querySelector('.focused');\n      if (e.key === 'ArrowUp') {\n        const prev = focused.previousElementSibling;\n        if (!prev) return;\n        prev.classList.add('focused');\n        focused.classList.remove('focused');\n      } else {\n        const next = focused.nextElementSibling;\n        if (!next) return;\n        next.classList.add('focused');\n        focused.classList.remove('focused');\n      }\n      break;\n    }\n  }\n});\n```\n\n## API document\n\nAPI document is [here](https://ygoto3.github.io/spatial-navigation-cursor/class/spatial-navigation-cursor/index.js~CursorManager.html).\n",
     "longname": "/Users/a12915/workspace/spatial-navigation-cursor/README.md",
     "name": "./README.md",
     "static": true,
     "access": "public"
   },
   {
-    "__docId__": 16,
+    "__docId__": 25,
     "kind": "testFile",
     "name": "spatial-navigation-cursor/index.test.js",
-    "content": "// @flow\n/*global global*/\nimport test from 'ava';\nimport { JSDOM } from 'jsdom';\nimport CursorManager from './index.js';\n\ntest.before(() => {\n  global.window = new JSDOM('<body><div id=\"root\"><p class=\"focused\" style=\"position: absolute; top: 100px; left: 50px;\">focused</p></div></body>').window;\n  global.document = global.window.document;\n});\n\ntest.after(() => {\n  delete global.window;\n  delete global.document;\n});\n\ntest('cursor', t => {\n  const root = document.getElementById('root');\n  if (!root) {\n    t.fail();\n    return;\n  }\n\n  const cursorManager = new CursorManager({\n    root,\n    focusSelector: '.focused'\n  });\n\n  const actual = cursorManager.getCursor();\n  t.is(actual.classList.item(0), '__spatial-navigation-cursor__');\n  t.is(actual.style.display, 'none');\n\n  cursorManager.move();\n  t.is(actual.style.display, '');\n});\n",
+    "content": "// @flow\n/*global global*/\nimport test from 'ava';\nimport { JSDOM } from 'jsdom';\nimport CursorManager from './index.js';\n\ntest.before(() => {\n  global.window = new JSDOM('<body><div id=\"root\"><p class=\"focused\" style=\"position: absolute; top: 100px; left: 50px;\">focused</p></div></body>').window;\n  global.document = global.window.document;\n  global.MutationObserver = class {\n    observe() {}\n    disconnect() {}\n  }\n});\n\ntest.after(() => {\n  delete global.window;\n  delete global.document;\n  delete global.MutationObserver;\n});\n\ntest('cursor', t => {\n  const root = document.getElementById('root');\n  if (!root) {\n    t.fail();\n    return;\n  }\n\n  const cursorManager = new CursorManager({\n    root,\n    focusClassName: 'focused'\n  });\n\n  const actual = cursorManager.getCursor();\n  t.is(actual.style.display, '');\n\n  cursorManager.start();\n  t.is(actual.classList.item(0), '__spatial-navigation-cursor__');\n  t.is(actual.style.position, 'absolute');\n  t.is(parseInt(actual.style.top, 10), 0);\n  t.is(parseInt(actual.style.left, 10), 0);\n});\n",
     "static": true,
     "longname": "/Users/a12915/workspace/spatial-navigation-cursor/index.test.js",
     "access": null,
@@ -433,7 +621,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 17,
+    "__docId__": 26,
     "kind": "test",
     "name": "test0",
     "testId": 0,
@@ -443,6 +631,6 @@
     "longname": "spatial-navigation-cursor/index.test.js~test0",
     "access": null,
     "description": "cursor",
-    "lineNumber": 17
+    "lineNumber": 22
   }
 ]

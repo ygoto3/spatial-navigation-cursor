@@ -13,18 +13,20 @@ export default class CursorManager {
   /*::
   root_: HTMLElement;
   cursor_: HTMLElement;
-  focusSelector_: string;
+  focused_: ?HTMLElement;
+  focusClassName_: string;
   viewHeight_: number;
+  observer_: MutationObserver;
   */
 
   /**
    * @param {Object} props
    * @param {HTMLElement} props.root an HTML element to use as its root
-   * @param {string} props.focusSelector a css selector to identify the focused element
+   * @param {string} props.focusClassName a css class name to identify the focused element
    */
-  constructor({ root, focusSelector, }/*: {
+  constructor({ root, focusClassName }/*: {
     root: HTMLElement,
-    focusSelector: string,
+    focusClassName: string,
   }*/) {
     /**
      * @type {HTMLElement}
@@ -36,7 +38,7 @@ export default class CursorManager {
      * @type {string}
      * @access private
      */
-    this.focusSelector_ = focusSelector;
+    this.focusClassName_ = focusClassName;
 
     /**
      * @type {HTMLElement}
@@ -49,16 +51,59 @@ export default class CursorManager {
      * @access private
      */
     this.viewHeight_ = window.innerHeight;
+  }
 
+  /**
+   * Start the manager
+   */
+  start()/*: void*/ {
     this.styleCursor_();
     this.appendToRoot_();
+    this.observeFocus_();
+    this.focus();
+  }
+
+  /**
+   * Stop the manager
+   */
+  stop()/*: void*/ {
+    this.removeFromRoot_();
+    this.disconnectFocus_();
+  }
+
+  /**
+   * Focus on the element with the cursor
+   */
+  focus()/*: void*/ {
+    if (!this.focused_ || this.cursor_.style.display === 'none') {
+      this.place();
+    } else {
+      this.move();
+    }
+  }
+
+  /**
+   * Place the cursor
+   */
+  place()/*: void*/ {
+    const focused = this.focused_ || document.querySelector(`.${ this.focusClassName_ }`);
+    if (!focused) return;
+
+    const origTransitionDuration = this.cursor_.style.transitionDuration;
+    this.cursor_.style.transitionDuration = '0';
+    const r = getAbsoluteElementRect(focused);
+    this.scrollIntoView_(r);
+    this.resizeCursorTo_(r);
+    this.moveCursorTo_(r);
+    this.showCursor_();
+    this.cursor_.style.transitionDuration = origTransitionDuration;
   }
 
   /**
    * Move the cursor
    */
   move()/*: void*/ {
-    const focused = this.root_.querySelector(this.focusSelector_);
+    const focused = this.focused_ || document.querySelector(`.${ this.focusClassName_ }`);
     if (!focused) {
       this.hideCursor_();
       return;
@@ -68,6 +113,7 @@ export default class CursorManager {
 
     const r = getAbsoluteElementRect(focused);
     this.scrollIntoView_(r);
+    this.resizeCursorTo_(r);
     this.moveCursorTo_(r);
   }
 
@@ -89,9 +135,9 @@ export default class CursorManager {
    * @param {number} rect.height
    */
   scrollIntoView_(rect/*: cursorManager$Rect*/)/*: void*/ {
-    const pageXOffset = window.pageXOffset;
+    const left = window.pageXOffset;
     window.scroll({
-      left: pageXOffset,
+      left,
       top: rect.top - (window.innerHeight * 0.5) + (rect.height * 0.5),
       behavior: 'smooth',
     });
@@ -108,6 +154,18 @@ export default class CursorManager {
    */
   moveCursorTo_(rect/*: cursorManager$Rect*/)/*: void*/ {
     this.cursor_.style.transform = `translate3d(${ rect.left }px, ${ rect.top }px, 0)`;
+  }
+
+  /**
+   * Move the cursor to the destination rect
+   * @access private
+   * @param {cursorManager$Rect} rect the destination rect to scroll to
+   * @param {number} rect.top
+   * @param {number} rect.left
+   * @param {number} rect.width
+   * @param {number} rect.height
+   */
+  resizeCursorTo_(rect/*: cursorManager$Rect*/)/*: void*/ {
     this.cursor_.style.width = `${ rect.width }px`;
     this.cursor_.style.height = `${ rect.height }px`;
   }
@@ -146,6 +204,45 @@ export default class CursorManager {
    */
   appendToRoot_()/*: void*/ {
     this.root_.appendChild(this.cursor_);
+  }
+
+  /**
+   * Append the cursor to the root
+   * @access private
+   */
+  removeFromRoot_()/*: void*/ {
+    this.root_.removeChild(this.cursor_);
+  }
+
+  /**
+   * Observer the change of focused elements
+   * @access private
+   */
+  observeFocus_() {
+    const observer = this.observer_ = new MutationObserver((mutationRecords) => {
+      for (let mutation of mutationRecords) {
+        if (
+          mutation.type !== 'attributes' ||
+          mutation.attributeName !== 'class' ||
+          !(mutation.target/*: any*/).classList.contains(this.focusClassName_)
+        ) continue;
+        this.focused_ = ((mutation.target/*: any*/)/*: HTMLElement*/);
+        this.focus();
+        break;
+      }
+    });
+    observer.observe(this.root_, {
+      attributes: true,
+      subtree: true,
+    });
+  }
+
+  /**
+   * Stop Observering the change of focused elements
+   * @access private
+   */
+  disconnectFocus_() {
+    this.observer_.disconnect();
   }
 }
 

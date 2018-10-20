@@ -39,7 +39,7 @@
 <p>You can see how it works <a href="https://ygoto3.github.io/spatial-navigation-cursor/demo/">here</a>.</p>
 <h2 id="install">Install</h2><pre><code class="lang-sh"><code class="source-code prettyprint">$ npm i spatial-navigation-cursor</code>
 </code></pre>
-<h1 id="usage">Usage</h1><p>Give an element &quot;focused&quot; class.</p>
+<h2 id="usage">Usage</h2><p>Give an element &quot;focused&quot; class name.  (You can use any other class name if you want.)</p>
 <pre><code class="lang-html"><code class="source-code prettyprint">&lt;main&gt;
   &lt;div class=&quot;block focused&quot;&gt;&lt;/div&gt;
   &lt;div class=&quot;block&quot;&gt;&lt;/div&gt;
@@ -59,15 +59,15 @@
   transition: width var(--transition-duration) var(--transition-easing), height var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing);
 }</code>
 </code></pre>
-<p>Instantiate a new cursor manager.  You can tell the cursor manager to move the cursor when you change focused elements.</p>
+<p>Instantiate a new cursor manager and start it.  When you give an element the focus class name, the cursor manager automatically moves the cursor to the element.</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">import CursorManager from &apos;spatial-navigation-cursor&apos;;
 
 const cursorManager = new CursorManager({
   root: document.body,
-  focusSelector: &apos;.focused&apos;,
+  focusClassName: &apos;focused&apos;,
 });
 
-cursorManager.move();
+cursorManager.start();
 
 window.addEventListener(&apos;keydown&apos;, (e) =&gt; {
   e.preventDefault();
@@ -89,9 +89,9 @@ window.addEventListener(&apos;keydown&apos;, (e) =&gt; {
       break;
     }
   }
-  cursorManager.move();
 });</code>
 </code></pre>
+<h2 id="api-document">API document</h2><p>API document is <a href="https://ygoto3.github.io/spatial-navigation-cursor/class/spatial-navigation-cursor/index.js~CursorManager.html">here</a>.</p>
 </div>
 </div>
 

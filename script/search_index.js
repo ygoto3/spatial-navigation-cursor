@@ -7,7 +7,7 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/spatial-navigation-cursor/index.test.js.html#lineNumber17",
+    "test-file/spatial-navigation-cursor/index.test.js.html#lineNumber22",
     "cursor",
     "test"
   ],
@@ -36,9 +36,27 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "spatial-navigation-cursor/index.js~cursormanager#focusselector_",
-    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-member-focusSelector_",
-    "spatial-navigation-cursor/index.js~CursorManager#focusSelector_",
+    "spatial-navigation-cursor/index.js~cursormanager#disconnectfocus_",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-disconnectFocus_",
+    "spatial-navigation-cursor/index.js~CursorManager#disconnectFocus_",
+    "method"
+  ],
+  [
+    "spatial-navigation-cursor/index.js~cursormanager#focus",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-focus",
+    "spatial-navigation-cursor/index.js~CursorManager#focus",
+    "method"
+  ],
+  [
+    "spatial-navigation-cursor/index.js~cursormanager#focusclassname_",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-member-focusClassName_",
+    "spatial-navigation-cursor/index.js~CursorManager#focusClassName_",
+    "member"
+  ],
+  [
+    "spatial-navigation-cursor/index.js~cursormanager#focused_",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-member-focused_",
+    "spatial-navigation-cursor/index.js~CursorManager#focused_",
     "member"
   ],
   [
@@ -66,6 +84,30 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "spatial-navigation-cursor/index.js~cursormanager#observefocus_",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-observeFocus_",
+    "spatial-navigation-cursor/index.js~CursorManager#observeFocus_",
+    "method"
+  ],
+  [
+    "spatial-navigation-cursor/index.js~cursormanager#place",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-place",
+    "spatial-navigation-cursor/index.js~CursorManager#place",
+    "method"
+  ],
+  [
+    "spatial-navigation-cursor/index.js~cursormanager#removefromroot_",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-removeFromRoot_",
+    "spatial-navigation-cursor/index.js~CursorManager#removeFromRoot_",
+    "method"
+  ],
+  [
+    "spatial-navigation-cursor/index.js~cursormanager#resizecursorto_",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-resizeCursorTo_",
+    "spatial-navigation-cursor/index.js~CursorManager#resizeCursorTo_",
+    "method"
+  ],
+  [
     "spatial-navigation-cursor/index.js~cursormanager#root_",
     "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-member-root_",
     "spatial-navigation-cursor/index.js~CursorManager#root_",
@@ -81,6 +123,18 @@ window.esdocSearchIndex = [
     "spatial-navigation-cursor/index.js~cursormanager#showcursor_",
     "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-showCursor_",
     "spatial-navigation-cursor/index.js~CursorManager#showCursor_",
+    "method"
+  ],
+  [
+    "spatial-navigation-cursor/index.js~cursormanager#start",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-start",
+    "spatial-navigation-cursor/index.js~CursorManager#start",
+    "method"
+  ],
+  [
+    "spatial-navigation-cursor/index.js~cursormanager#stop",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-stop",
+    "spatial-navigation-cursor/index.js~CursorManager#stop",
     "method"
   ],
   [
