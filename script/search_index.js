@@ -7,7 +7,7 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/spatial-navigation-cursor/index.test.js.html#lineNumber22",
+    "test-file/spatial-navigation-cursor/index.test.js.html#lineNumber26",
     "cursor",
     "test"
   ],

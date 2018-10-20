@@ -39,14 +39,18 @@
 /*global global*/
 import test from &apos;ava&apos;;
 import { JSDOM } from &apos;jsdom&apos;;
+import td from &apos;testdouble&apos;;
 import CursorManager from &apos;./index.js&apos;;
+
+var observe = td.func();
+var disconnect = td.func();
 
 test.before(() =&gt; {
   global.window = new JSDOM(&apos;&lt;body&gt;&lt;div id=&quot;root&quot;&gt;&lt;p class=&quot;focused&quot; style=&quot;position: absolute; top: 100px; left: 50px;&quot;&gt;focused&lt;/p&gt;&lt;/div&gt;&lt;/body&gt;&apos;).window;
   global.document = global.window.document;
   global.MutationObserver = class {
-    observe() {}
-    disconnect() {}
+    observe() { observe() }
+    disconnect() { disconnect() }
   }
 });
 
@@ -72,10 +76,16 @@ test(&apos;cursor&apos;, t =&gt; {
   t.is(actual.style.display, &apos;&apos;);
 
   cursorManager.start();
+  t.is(actual, root.querySelector(&apos;.__spatial-navigation-cursor__&apos;));
   t.is(actual.classList.item(0), &apos;__spatial-navigation-cursor__&apos;);
   t.is(actual.style.position, &apos;absolute&apos;);
   t.is(parseInt(actual.style.top, 10), 0);
   t.is(parseInt(actual.style.left, 10), 0);
+  t.is(td.explain(observe).callCount, 1);
+
+  cursorManager.stop();
+  t.is(root.querySelector(&apos;.__spatial-navigation-cursor__&apos;), null);
+  t.is(td.explain(disconnect).callCount, 1);
 });
 </code></pre>
 

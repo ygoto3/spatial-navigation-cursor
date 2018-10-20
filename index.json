@@ -634,7 +634,7 @@
     "__docId__": 27,
     "kind": "testFile",
     "name": "spatial-navigation-cursor/index.test.js",
-    "content": "// @flow\n/*global global*/\nimport test from 'ava';\nimport { JSDOM } from 'jsdom';\nimport CursorManager from './index.js';\n\ntest.before(() => {\n  global.window = new JSDOM('<body><div id=\"root\"><p class=\"focused\" style=\"position: absolute; top: 100px; left: 50px;\">focused</p></div></body>').window;\n  global.document = global.window.document;\n  global.MutationObserver = class {\n    observe() {}\n    disconnect() {}\n  }\n});\n\ntest.after(() => {\n  delete global.window;\n  delete global.document;\n  delete global.MutationObserver;\n});\n\ntest('cursor', t => {\n  const root = document.getElementById('root');\n  if (!root) {\n    t.fail();\n    return;\n  }\n\n  const cursorManager = new CursorManager({\n    root,\n    focusClassName: 'focused'\n  });\n\n  const actual = cursorManager.getCursor();\n  t.is(actual.style.display, '');\n\n  cursorManager.start();\n  t.is(actual.classList.item(0), '__spatial-navigation-cursor__');\n  t.is(actual.style.position, 'absolute');\n  t.is(parseInt(actual.style.top, 10), 0);\n  t.is(parseInt(actual.style.left, 10), 0);\n});\n",
+    "content": "// @flow\n/*global global*/\nimport test from 'ava';\nimport { JSDOM } from 'jsdom';\nimport td from 'testdouble';\nimport CursorManager from './index.js';\n\nvar observe = td.func();\nvar disconnect = td.func();\n\ntest.before(() => {\n  global.window = new JSDOM('<body><div id=\"root\"><p class=\"focused\" style=\"position: absolute; top: 100px; left: 50px;\">focused</p></div></body>').window;\n  global.document = global.window.document;\n  global.MutationObserver = class {\n    observe() { observe() }\n    disconnect() { disconnect() }\n  }\n});\n\ntest.after(() => {\n  delete global.window;\n  delete global.document;\n  delete global.MutationObserver;\n});\n\ntest('cursor', t => {\n  const root = document.getElementById('root');\n  if (!root) {\n    t.fail();\n    return;\n  }\n\n  const cursorManager = new CursorManager({\n    root,\n    focusClassName: 'focused'\n  });\n\n  const actual = cursorManager.getCursor();\n  t.is(actual.style.display, '');\n\n  cursorManager.start();\n  t.is(actual, root.querySelector('.__spatial-navigation-cursor__'));\n  t.is(actual.classList.item(0), '__spatial-navigation-cursor__');\n  t.is(actual.style.position, 'absolute');\n  t.is(parseInt(actual.style.top, 10), 0);\n  t.is(parseInt(actual.style.left, 10), 0);\n  t.is(td.explain(observe).callCount, 1);\n\n  cursorManager.stop();\n  t.is(root.querySelector('.__spatial-navigation-cursor__'), null);\n  t.is(td.explain(disconnect).callCount, 1);\n});\n",
     "static": true,
     "longname": "/Users/a12915/workspace/spatial-navigation-cursor/index.test.js",
     "access": null,
@@ -652,6 +652,6 @@
     "longname": "spatial-navigation-cursor/index.test.js~test0",
     "access": null,
     "description": "cursor",
-    "lineNumber": 22
+    "lineNumber": 26
   }
 ]
