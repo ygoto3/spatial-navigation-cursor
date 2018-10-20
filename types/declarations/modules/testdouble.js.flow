@@ -1,0 +1,23 @@
+type testdouble$testDoubleFunction = Function;
+
+interface testdouble$Call {
+  args: any[];
+}
+
+interface testdouble$Explanation {
+  name: string;
+  callCount: number;
+  calls: testdouble$Call[];
+  description: string;
+}
+
+declare module 'testdouble' {
+  declare module.exports:{
+    when(obj:Object, config:?Object):Function;
+    replace(obj:Object, methodName:string):void;
+    reset():void;
+    function(): testdouble$testDoubleFunction;
+    func(): testdouble$testDoubleFunction;
+    explain(fn: testdouble$testDoubleFunction): testdouble$Explanation;
+  }
+}

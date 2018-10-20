@@ -12,9 +12,9 @@ You can see how it works [here](https://ygoto3.github.io/spatial-navigation-curs
 $ npm i spatial-navigation-cursor
 ```
 
-# Usage
+## Usage
 
-Give an element "focused" class.
+Give an element "focused" class name.  (You can use any other class name if you want.)
 
 ```html
 <main>
@@ -40,17 +40,17 @@ Give an element "focused" class.
 }
 ```
 
-Instantiate a new cursor manager.  You can tell the cursor manager to move the cursor when you change focused elements.
+Instantiate a new cursor manager and start it.  When you give an element the focus class name, the cursor manager automatically moves the cursor to the element.
 
 ```js
 import CursorManager from 'spatial-navigation-cursor';
 
 const cursorManager = new CursorManager({
   root: document.body,
-  focusSelector: '.focused',
+  focusClassName: 'focused',
 });
 
-cursorManager.move();
+cursorManager.start();
 
 window.addEventListener('keydown', (e) => {
   e.preventDefault();
@@ -72,6 +72,9 @@ window.addEventListener('keydown', (e) => {
       break;
     }
   }
-  cursorManager.move();
 });
 ```
+
+## API document
+
+API document is [here](https://ygoto3.github.io/spatial-navigation-cursor/class/spatial-navigation-cursor/index.js~CursorManager.html).

@@ -98,20 +98,37 @@ declare class Class0 extends Element {
   forceSpellcheck(): void;
   getBoundingClientRect(): ClientRect;
 }
+declare class Class1 {
+
+  constructor(callback: (arr: Array<MutationRecord>, observer: Class1) => any): void;
+  disconnect(): void;
+  observe(target: Node, options: {childList: true} | {attributes: true} | {characterData: true} & {attributeFilter?: Array<string>, attributeOldValue?: boolean, characterDataOldValue?: boolean, subtree?: boolean}): void;
+  takeRecords(): Array<MutationRecord>;
+}
 declare export default class {
 
   cursor_: Class0;
-  focusSelector_: string;
+  focusClassName_: string;
+  focused_: ?Class0;
+  observer_: ?Class1;
   root_: Class0;
   viewHeight_: number;
   appendToRoot_(): void;
-  constructor(_: {focusSelector: string, root: Class0}): void;
+  constructor(_: {focusClassName: string, root: Class0}): void;
+  disconnectFocus_(): void;
+  focus(): void;
   getCursor(): Class0;
   hideCursor_(): void;
   move(): void;
   moveCursorTo_(rect: {height: number, left: number, top: number, width: number}): void;
+  observeFocus_(): void;
+  place(): void;
+  removeFromRoot_(): void;
+  resizeCursorTo_(rect: {height: number, left: number, top: number, width: number}): void;
   scrollIntoView_(rect: {height: number, left: number, top: number, width: number}): void;
   showCursor_(): void;
+  start(): void;
+  stop(): void;
   styleCursor_(): void;
 }
 

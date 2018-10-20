@@ -2,16 +2,25 @@
 /*global global*/
 import test from 'ava';
 import { JSDOM } from 'jsdom';
+import td from 'testdouble';
 import CursorManager from './index.js';
+
+var observe = td.func();
+var disconnect = td.func();
 
 test.before(() => {
   global.window = new JSDOM('<body><div id="root"><p class="focused" style="position: absolute; top: 100px; left: 50px;">focused</p></div></body>').window;
   global.document = global.window.document;
+  global.MutationObserver = class {
+    observe() { observe() }
+    disconnect() { disconnect() }
+  }
 });
 
 test.after(() => {
   delete global.window;
   delete global.document;
+  delete global.MutationObserver;
 });
 
 test('cursor', t => {
@@ -23,13 +32,21 @@ test('cursor', t => {
 
   const cursorManager = new CursorManager({
     root,
-    focusSelector: '.focused'
+    focusClassName: 'focused'
   });
 
   const actual = cursorManager.getCursor();
-  t.is(actual.classList.item(0), '__spatial-navigation-cursor__');
-  t.is(actual.style.display, 'none');
-
-  cursorManager.move();
   t.is(actual.style.display, '');
+
+  cursorManager.start();
+  t.is(actual, root.querySelector('.__spatial-navigation-cursor__'));
+  t.is(actual.classList.item(0), '__spatial-navigation-cursor__');
+  t.is(actual.style.position, 'absolute');
+  t.is(parseInt(actual.style.top, 10), 0);
+  t.is(parseInt(actual.style.left, 10), 0);
+  t.is(td.explain(observe).callCount, 1);
+
+  cursorManager.stop();
+  t.is(root.querySelector('.__spatial-navigation-cursor__'), null);
+  t.is(td.explain(disconnect).callCount, 1);
 });

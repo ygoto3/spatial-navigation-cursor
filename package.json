@@ -1,6 +1,6 @@
 {
   "name": "spatial-navigation-cursor",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "index.js",
   "files": [
     "index.js",
@@ -17,7 +17,7 @@
     "test": "ava -v",
     "type": "flow",
     "lint": "eslint index.js index.test.js",
-    "doc": "esdoc",
+    "doc": "esdoc && cp -rp ./assets ./docs",
     "gen-flow-files": "flow gen-flow-files ./index.js > ./index.js.flow",
     "build:demo": "mkdir -p ./docs/demo && cp ./demo.html ./docs/demo/index.html && cp ./index.js ./docs/demo",
     "deploy:doc": "gh-pages -d docs"
@@ -31,6 +31,7 @@
     "esm": "^3.0.84",
     "flow-bin": "^0.83.0",
     "gh-pages": "^2.0.1",
-    "jsdom": "^12.2.0"
+    "jsdom": "^12.2.0",
+    "testdouble": "^3.8.2"
   }
 }
