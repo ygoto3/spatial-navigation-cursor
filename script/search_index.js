@@ -90,6 +90,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "spatial-navigation-cursor/index.js~cursormanager#observer_",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-member-observer_",
+    "spatial-navigation-cursor/index.js~CursorManager#observer_",
+    "member"
+  ],
+  [
     "spatial-navigation-cursor/index.js~cursormanager#place",
     "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-place",
     "spatial-navigation-cursor/index.js~CursorManager#place",

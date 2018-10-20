@@ -16,7 +16,7 @@ export default class CursorManager {
   focused_: ?HTMLElement;
   focusClassName_: string;
   viewHeight_: number;
-  observer_: MutationObserver;
+  observer_: ?MutationObserver;
   */
 
   /**
@@ -47,10 +47,22 @@ export default class CursorManager {
     this.cursor_ = document.createElement('div');
 
     /**
+     * @type {HTMLElement}
+     * @access private
+     */
+    this.focused_ = null;
+
+    /**
      * @type {string}
      * @access private
      */
     this.viewHeight_ = window.innerHeight;
+
+    /**
+     * @type {MutationObserver}
+     * @access private
+     */
+    this.observer_ = null;
   }
 
   /**
@@ -215,7 +227,7 @@ export default class CursorManager {
   }
 
   /**
-   * Observer the change of focused elements
+   * Observe the change of focused elements
    * @access private
    */
   observeFocus_() {
@@ -242,6 +254,7 @@ export default class CursorManager {
    * @access private
    */
   disconnectFocus_() {
+    if (!this.observer_) return;
     this.observer_.disconnect();
   }
 }
