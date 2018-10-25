@@ -116,7 +116,7 @@ export default class CursorManager {
    */
   move()/*: void*/ {
     const focused = this.focused_ || document.querySelector(`.${ this.focusClassName_ }`);
-    if (!focused) {
+    if (!focused || !focused.classList.contains(this.focusClassName_)) {
       this.hideCursor_();
       return;
     } else {
