@@ -116,7 +116,7 @@ export default class CursorManager {
    */
   move()/*: void*/ {
     const focused = this.focused_ || document.querySelector(`.${ this.focusClassName_ }`);
-    if (!focused) {
+    if (!focused || !focused.classList.contains(this.focusClassName_)) {
       this.hideCursor_();
       return;
     } else {
@@ -165,7 +165,10 @@ export default class CursorManager {
    * @param {number} rect.height
    */
   moveCursorTo_(rect/*: cursorManager$Rect*/)/*: void*/ {
-    this.cursor_.style.transform = `translate3d(${ rect.left }px, ${ rect.top }px, 0)`;
+    const style = getComputedStyle(this.cursor_, '');
+    const borserTop = parseInt(style.borderTopWidth, 10);
+    const borserLeft = parseInt(style.borderLeftWidth, 10);
+    this.cursor_.style.transform = `translate3d(${ rect.left - borserLeft }px, ${ rect.top - borserTop }px, 0)`;
   }
 
   /**
