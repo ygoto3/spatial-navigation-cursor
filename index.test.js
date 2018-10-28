@@ -54,10 +54,10 @@ test('cursor', t => {
 
   const listener = td.func();
   cursorManager.addEventListener(CursorManager.Events.FOCUS_UPDATED, listener);
-  cursorManager.trigger_(CursorManager.Events.FOCUS_UPDATED);
+  (cursorManager/*: any*/).trigger_(CursorManager.Events.FOCUS_UPDATED);
   t.is(td.explain(listener).callCount, 1);
 
   cursorManager.removeEventListener(CursorManager.Events.FOCUS_UPDATED, listener);
-  cursorManager.trigger_(CursorManager.Events.FOCUS_UPDATED);
+  (cursorManager/*: any*/).trigger_(CursorManager.Events.FOCUS_UPDATED);
   t.is(td.explain(listener).callCount, 1);
 });
