@@ -7,7 +7,7 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/spatial-navigation-cursor/index.test.js.html#lineNumber26",
+    "test-file/spatial-navigation-cursor/index.test.js.html#lineNumber28",
     "cursor",
     "test"
   ],
@@ -16,6 +16,12 @@ window.esdocSearchIndex = [
     "file/spatial-navigation-cursor/index.js.html",
     "spatial-navigation-cursor/index.js",
     "file"
+  ],
+  [
+    "spatial-navigation-cursor/index.js~cursormanager#addeventlistener",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-addEventListener",
+    "spatial-navigation-cursor/index.js~CursorManager#addEventListener",
+    "method"
   ],
   [
     "spatial-navigation-cursor/index.js~cursormanager#appendtoroot_",
@@ -42,6 +48,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "spatial-navigation-cursor/index.js~cursormanager#eventlisteners_",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-member-eventListeners_",
+    "spatial-navigation-cursor/index.js~CursorManager#eventListeners_",
+    "member"
+  ],
+  [
     "spatial-navigation-cursor/index.js~cursormanager#focus",
     "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-focus",
     "spatial-navigation-cursor/index.js~CursorManager#focus",
@@ -60,9 +72,27 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "spatial-navigation-cursor/index.js~cursormanager#freeze",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-freeze",
+    "spatial-navigation-cursor/index.js~CursorManager#freeze",
+    "method"
+  ],
+  [
+    "spatial-navigation-cursor/index.js~cursormanager#freezed_",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-member-freezed_",
+    "spatial-navigation-cursor/index.js~CursorManager#freezed_",
+    "member"
+  ],
+  [
     "spatial-navigation-cursor/index.js~cursormanager#getcursor",
     "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-getCursor",
     "spatial-navigation-cursor/index.js~CursorManager#getCursor",
+    "method"
+  ],
+  [
+    "spatial-navigation-cursor/index.js~cursormanager#getfocusedelement",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-getFocusedElement",
+    "spatial-navigation-cursor/index.js~CursorManager#getFocusedElement",
     "method"
   ],
   [
@@ -102,6 +132,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "spatial-navigation-cursor/index.js~cursormanager#removeeventlistener",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-removeEventListener",
+    "spatial-navigation-cursor/index.js~CursorManager#removeEventListener",
+    "method"
+  ],
+  [
     "spatial-navigation-cursor/index.js~cursormanager#removefromroot_",
     "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-removeFromRoot_",
     "spatial-navigation-cursor/index.js~CursorManager#removeFromRoot_",
@@ -111,6 +147,12 @@ window.esdocSearchIndex = [
     "spatial-navigation-cursor/index.js~cursormanager#resizecursorto_",
     "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-resizeCursorTo_",
     "spatial-navigation-cursor/index.js~CursorManager#resizeCursorTo_",
+    "method"
+  ],
+  [
+    "spatial-navigation-cursor/index.js~cursormanager#resume",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-resume",
+    "spatial-navigation-cursor/index.js~CursorManager#resume",
     "method"
   ],
   [
@@ -147,6 +189,12 @@ window.esdocSearchIndex = [
     "spatial-navigation-cursor/index.js~cursormanager#stylecursor_",
     "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-styleCursor_",
     "spatial-navigation-cursor/index.js~CursorManager#styleCursor_",
+    "method"
+  ],
+  [
+    "spatial-navigation-cursor/index.js~cursormanager#trigger_",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-trigger_",
+    "spatial-navigation-cursor/index.js~CursorManager#trigger_",
     "method"
   ],
   [

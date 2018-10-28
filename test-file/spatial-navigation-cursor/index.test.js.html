@@ -52,12 +52,14 @@ test.before(() =&gt; {
     observe() { observe() }
     disconnect() { disconnect() }
   }
+  global.getComputedStyle = () =&gt; ({ borderLeftWidth: &apos;2px&apos;, borderTopWidth: &apos;2px&apos; });
 });
 
 test.after(() =&gt; {
   delete global.window;
   delete global.document;
   delete global.MutationObserver;
+  delete global.getComputedStyle;
 });
 
 test(&apos;cursor&apos;, t =&gt; {
@@ -86,6 +88,15 @@ test(&apos;cursor&apos;, t =&gt; {
   cursorManager.stop();
   t.is(root.querySelector(&apos;.__spatial-navigation-cursor__&apos;), null);
   t.is(td.explain(disconnect).callCount, 1);
+
+  const listener = td.func();
+  cursorManager.addEventListener(CursorManager.Events.FOCUS_UPDATED, listener);
+  cursorManager.trigger_(CursorManager.Events.FOCUS_UPDATED);
+  t.is(td.explain(listener).callCount, 1);
+
+  cursorManager.removeEventListener(CursorManager.Events.FOCUS_UPDATED, listener);
+  cursorManager.trigger_(CursorManager.Events.FOCUS_UPDATED);
+  t.is(td.explain(listener).callCount, 1);
 });
 </code></pre>
 
