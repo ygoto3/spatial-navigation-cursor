@@ -7,16 +7,36 @@ type cursorManager$Rect = {
   width: number;
   height: number;
 };
+
+type spatialNavigationCursor$EventListener = {
+  type: string;
+  listener: spatialNavigationCursor$EventHandler;
+};
+
+class spatialNavigationCursor$FocusUpdatedEvent extends CustomEvent {
+  detail: {
+    target: HTMLElement;
+  };
+}
+
+type spatialNavigationCursor$EventHandler = (event: spatialNavigationCursor$FocusUpdatedEvent) => mixed;
+
+type spatialNavigationCursor$Events = {
+  FOCUS_UPDATED: 'focusUpdated';
+};
 */
 
 export default class CursorManager {
   /*::
+  static Events: spatialNavigationCursor$Events;
   root_: HTMLElement;
   cursor_: HTMLElement;
   focused_: ?HTMLElement;
+  freezed_: boolean;
   focusClassName_: string;
   viewHeight_: number;
   observer_: ?MutationObserver;
+  eventListeners_: spatialNavigationCursor$EventListener[];
   */
 
   /**
@@ -53,6 +73,12 @@ export default class CursorManager {
     this.focused_ = null;
 
     /**
+     * @type {boolean}
+     * @access private
+     */
+    this.freezed_ = false;
+
+    /**
      * @type {string}
      * @access private
      */
@@ -63,6 +89,12 @@ export default class CursorManager {
      * @access private
      */
     this.observer_ = null;
+
+    /**
+     * @type {Object[]}
+     * @access private
+     */
+    this.eventListeners_ = [];
   }
 
   /**
@@ -76,11 +108,26 @@ export default class CursorManager {
   }
 
   /**
+   * Resume the manager
+   */
+  resume()/*: void*/ {
+    this.freezed_ = false;
+    this.focus();
+  }
+
+  /**
    * Stop the manager
    */
   stop()/*: void*/ {
     this.removeFromRoot_();
     this.disconnectFocus_();
+  }
+
+  /**
+   * Freeze the cursor
+   */
+  freeze() {
+    this.freezed_ = true;
   }
 
   /**
@@ -107,7 +154,11 @@ export default class CursorManager {
     this.scrollIntoView_(r);
     this.resizeCursorTo_(r);
     this.moveCursorTo_(r);
-    this.showCursor_();
+    if (!focused.classList.contains(this.focusClassName_)) {
+      this.hideCursor_();
+    } else {
+      this.showCursor_();
+    }
     this.cursor_.style.transitionDuration = origTransitionDuration;
   }
 
@@ -135,6 +186,35 @@ export default class CursorManager {
    */
   getCursor()/*: HTMLElement*/ {
     return this.cursor_;
+  }
+
+  /**
+   * Add an event listener
+   * @return {HTMLElement} the focused element
+   */
+  getFocusedElement()/*: ?HTMLElement*/ {
+    return this.focused_;
+  }
+
+  /**
+   * Add an event listener
+   * @param {string} type an event type
+   * @param {Function} listener an evnet handler 
+   */
+  addEventListener(type/*: string*/, listener/*: spatialNavigationCursor$EventHandler*/) {
+    this.eventListeners_.push({ type, listener });
+  }
+
+  /**
+   * Remove an event listener
+   * @param {string} type an event type
+   * @param {Function} listener an evnet handler 
+   */
+  removeEventListener(type/*: string*/, listener/*: spatialNavigationCursor$EventHandler*/) {
+    const idx = this.eventListeners_.findIndex(l => l.type === type && l.listener === listener);
+    if (~idx) {
+      this.eventListeners_.splice(idx, 1);
+    }
   }
 
   /**
@@ -235,18 +315,25 @@ export default class CursorManager {
    */
   observeFocus_() {
     const observer = this.observer_ = new MutationObserver((mutationRecords) => {
+      var target;
       for (let mutation of mutationRecords) {
-        if (
-          mutation.type !== 'attributes' ||
-          mutation.attributeName !== 'class' ||
-          !(mutation.target/*: any*/).classList.contains(this.focusClassName_)
-        ) continue;
-        this.focused_ = ((mutation.target/*: any*/)/*: HTMLElement*/);
-        this.focus();
-        break;
+        if ( (mutation.target/*: any*/).classList.contains(this.focusClassName_) ) {
+          target = mutation.target;
+          break;
+        }
+      }
+      if (target) {
+        this.focused_ = ((target/*: any*/)/*: HTMLElement*/);
+        if (!this.freezed_) this.focus();
+        this.trigger_(CursorManager.Events.FOCUS_UPDATED, new CustomEvent(CursorManager.Events.FOCUS_UPDATED, {
+          detail: { target },
+        }));
+      } else {
+        this.hideCursor_();
       }
     });
     observer.observe(this.root_, {
+      attributeFilter: [ "class" ],
       attributes: true,
       subtree: true,
     });
@@ -256,11 +343,27 @@ export default class CursorManager {
    * Stop Observering the change of focused elements
    * @access private
    */
-  disconnectFocus_() {
+  disconnectFocus_()/*: void*/ {
     if (!this.observer_) return;
     this.observer_.disconnect();
   }
+
+  /**
+   * Trigger an event
+   * @access private
+   * @param {string} type an event type
+   * @param {...*} args an event type
+   */
+  trigger_(type/*: string*/, ...args/*: any[]*/)/*: void*/ {
+    this.eventListeners_
+      .filter(l => l.type === type)
+      .forEach(l => l.listener(...args));
+  }
 }
+
+CursorManager.Events = {
+  FOCUS_UPDATED: 'focusUpdated',
+};
 
 /**
  * Get an element rect with its absolute location

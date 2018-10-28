@@ -1,12 +1,29 @@
 // @flow
 
 declare export default class CursorManager {
+  static Events: spatialNavigationCursor$Events;
   constructor(_: {focusClassName: string, root: HTMLElement}): void;
   focus(): void;
+  freeze(): void;
+  resume(): void;
   getCursor(): HTMLElement;
+  getFocusedElement(): ?HTMLElement;
   move(): void;
   place(): void;
   start(): void;
   stop(): void;
+  addEventListener(type: string, listener: spatialNavigationCursor$EventHandler): void;
+  removeEventListener(type: string, listener: spatialNavigationCursor$EventHandler): void;
 }
 
+class spatialNavigationCursor$FocusUpdatedEvent extends CustomEvent {
+  detail: {
+    target: HTMLElement;
+  };
+}
+
+type spatialNavigationCursor$EventHandler = (event: spatialNavigationCursor$FocusUpdatedEvent) => mixed;
+
+type spatialNavigationCursor$Events = {
+  FOCUS_UPDATED: 'focusUpdated';
+};
