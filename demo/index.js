@@ -8,20 +8,20 @@ type cursorManager$Rect = {
   height: number;
 };
 
-type spatialNavigationCursor$EventListener = {
+export type spatialNavigationCursor$EventListener = {
   type: string;
   listener: spatialNavigationCursor$EventHandler;
 };
 
-class spatialNavigationCursor$FocusUpdatedEvent extends CustomEvent {
+export class spatialNavigationCursor$FocusUpdatedEvent extends CustomEvent {
   detail: {
     target: HTMLElement;
   };
 }
 
-type spatialNavigationCursor$EventHandler = (event: spatialNavigationCursor$FocusUpdatedEvent) => mixed;
+export type spatialNavigationCursor$EventHandler = (event: spatialNavigationCursor$FocusUpdatedEvent) => mixed;
 
-type spatialNavigationCursor$Events = {
+export type spatialNavigationCursor$Events = {
   FOCUS_UPDATED: 'focusUpdated';
 };
 */
@@ -145,8 +145,11 @@ export default class CursorManager {
    * Place the cursor
    */
   place()/*: void*/ {
-    const focused = this.focused_ || document.querySelector(`.${ this.focusClassName_ }`);
-    if (!focused) return;
+    const focused = isInDocumentBody(this.focused_) ? this.focused_ : document.querySelector(`.${ this.focusClassName_ }`);
+    if (!focused) {
+      this.hideCursor_();
+      return;
+    }
 
     const origTransitionDuration = this.cursor_.style.transitionDuration;
     this.cursor_.style.transitionDuration = '0';
@@ -166,7 +169,7 @@ export default class CursorManager {
    * Move the cursor
    */
   move()/*: void*/ {
-    const focused = this.focused_ || document.querySelector(`.${ this.focusClassName_ }`);
+    const focused = isInDocumentBody(this.focused_) ? this.focused_ : document.querySelector(`.${ this.focusClassName_ }`);
     if (!focused || !focused.classList.contains(this.focusClassName_)) {
       this.hideCursor_();
       return;
@@ -373,4 +376,16 @@ CursorManager.Events = {
 function getAbsoluteElementRect(elem/*: HTMLElement*/)/* cursorManager$Rect*/ {
   const r = elem.getBoundingClientRect();
   return { left: r.left + window.pageXOffset, top: r.top + window.pageYOffset, width: r.width, height: r.height };
+}
+
+/**
+ * Check if an element is in the document body
+ * @param {HTMLElement} element an HTML element
+ * @return {boolean} whether the element is the document body
+ */
+function isInDocumentBody(element/*: ?HTMLElement*/)/*: boolean*/ {
+  if (!element) return false;
+  if (element === document.body) return true;
+  if (!element.offsetParent) return false;
+  return isInDocumentBody((element.offsetParent/*: any*/));
 }
