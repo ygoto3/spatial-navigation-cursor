@@ -16,6 +16,11 @@ declare export default class CursorManager {
   removeEventListener(type: string, listener: spatialNavigationCursor$EventHandler): void;
 }
 
+export type spatialNavigationCursor$EventListener = {
+  type: string;
+  listener: spatialNavigationCursor$EventHandler;
+};
+
 declare export class spatialNavigationCursor$FocusUpdatedEvent extends CustomEvent {
   detail: {
     target: HTMLElement;
