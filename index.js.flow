@@ -9,6 +9,7 @@ declare export default class CursorManager {
   getCursor(): HTMLElement;
   getFocusedElement(): ?HTMLElement;
   move(): void;
+  resize(): void;
   place(): void;
   start(): void;
   stop(): void;

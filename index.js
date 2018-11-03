@@ -24,6 +24,11 @@ export type spatialNavigationCursor$EventHandler = (event: spatialNavigationCurs
 export type spatialNavigationCursor$Events = {
   FOCUS_UPDATED: 'focusUpdated';
 };
+
+type Dimension = {
+  width: number;
+  height: number;
+};
 */
 
 export default class CursorManager {
@@ -154,12 +159,13 @@ export default class CursorManager {
     const origTransitionDuration = this.cursor_.style.transitionDuration;
     this.cursor_.style.transitionDuration = '0';
     const r = getAbsoluteElementRect(focused);
-    this.scrollIntoView_(r);
+    if (focused.dataset.sncTracked !== 'false') this.scrollIntoView_(r);
     this.resizeCursorTo_(r);
     this.moveCursorTo_(r);
     if (!focused.classList.contains(this.focusClassName_)) {
       this.hideCursor_();
     } else {
+      this.updateCursorModifier_();
       this.showCursor_();
     }
     this.cursor_.style.transitionDuration = origTransitionDuration;
@@ -178,9 +184,20 @@ export default class CursorManager {
     }
 
     const r = getAbsoluteElementRect(focused);
-    this.scrollIntoView_(r);
+    if (focused.dataset.sncTracked !== 'false') this.scrollIntoView_(r);
     this.resizeCursorTo_(r);
     this.moveCursorTo_(r);
+    this.updateCursorModifier_();
+  }
+
+  /**
+   * Resize the cursor to the dimension of the focused element
+   */
+  resize() {
+    const focused = this.focused_;
+    if (!focused) return;
+    const { width, height } = getElementDimension(focused);
+    this.resizeCursorTo_({ width, height, top: 0, left: 0 });
   }
 
   /**
@@ -278,6 +295,18 @@ export default class CursorManager {
     this.cursor_.style.top = '0';
     this.cursor_.style.left = '0';
     this.hideCursor_();
+  }
+
+  /**
+   * Update the cursor's modifier
+   * @access private
+   */
+  updateCursorModifier_() {
+    if (!this.focused_) return;
+    const old = this.cursor_.dataset.sncModifier || '';
+    const now = this.focused_.dataset.sncModifier || '';
+    if (now === old) return;
+    this.cursor_.dataset.sncModifier = now;
   }
 
   /**
@@ -388,4 +417,22 @@ function isInDocumentBody(element/*: ?HTMLElement*/)/*: boolean*/ {
   if (element === document.body) return true;
   if (!element.offsetParent) return false;
   return isInDocumentBody((element.offsetParent/*: any*/));
+}
+
+/**
+ * Get an element's dimension
+ * @param {HTMLElement} element an HTML element
+ * @return {Object} the dimension
+ */
+function getElementDimension(element/*: HTMLElement*/)/*: Dimension*/ {
+  const style = getComputedStyle(element);
+  const w = parseInt(style.width, 10);
+  const h = parseInt(style.height, 10);
+  const l = parseInt(style.paddingLeft, 10);
+  const r = parseInt(style.paddingRight, 10);
+  const t = parseInt(style.paddingTop, 10);
+  const b = parseInt(style.paddingBottom, 10);
+  const width = w + l + r;
+  const height = h + t + b;
+  return { width, height };
 }

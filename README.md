@@ -75,6 +75,40 @@ window.addEventListener('keydown', (e) => {
 });
 ```
 
+## Advanced Usage
+
+### Cursor Style Modifier
+
+You can modify the cursor's style by add a custom data attribute to a focusable element.
+
+```html
+<main>
+  <div class="block focused" data-snc-modifer="green"></div>
+  <div class="block" data-snc-modifer="green"></div>
+</main>
+```
+
+The custom data attribute is copied to the cursor element, so you can extend the style like below.
+
+```css
+[data-snc-modifer="green"].__spatial-navigation-cursor__ {
+  outline-color: green;
+}
+```
+
+### Untracking
+
+By default, when the cursor moves to a focused element, the cursor manager automatically scroll the window to track the element.  Sometimes you do not want the manager to scroll the window for a specific element.  For example, you do not want window scrolling for a position-fixed element.
+
+You can disable tracking motion by setting `"false"` to an element's `data-snc-tracked` attribute.
+
+```html
+<main style="position: fixed">
+  <div class="block focused" data-snc-tracked="false"></div>
+  <div class="block" data-snc-tracked="false"></div>
+</main>
+```
+
 ## API document
 
 API document is [here](https://ygoto3.github.io/spatial-navigation-cursor/class/spatial-navigation-cursor/index.js~CursorManager.html).
