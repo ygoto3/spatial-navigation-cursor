@@ -21,13 +21,22 @@ div.block + div.block {
   outline: 5px solid black;
   transition: width var(--transition-duration) var(--transition-easing), height var(--transition-duration) var(--transition-easing), transform var(--transition-duration) var(--transition-easing);
 }
+
+[data-snc-modifier="green"].__spatial-navigation-cursor__ {
+  outline-color: green;
+}
+
+[data-snc-modifier="orange"].__spatial-navigation-cursor__ {
+  outline-color: orange;
+}
 </style>
 <title></title>
 <body>
   <main>
     <div class="block focused"></div>
+    <div class="block" data-snc-modifier="green"></div>
     <div class="block"></div>
-    <div class="block"></div>
+    <div class="block" data-snc-modifier="orange"></div>
     <div class="block"></div>
     <div class="block"></div>
     <div class="block"></div>

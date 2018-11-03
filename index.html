@@ -91,6 +91,24 @@ window.addEventListener(&apos;keydown&apos;, (e) =&gt; {
   }
 });</code>
 </code></pre>
+<h2 id="advanced-usage">Advanced Usage</h2><h3 id="cursor-style-modifier">Cursor Style Modifier</h3><p>You can modify the cursor&apos;s style by add a custom data attribute to a focusable element.</p>
+<pre><code class="lang-html"><code class="source-code prettyprint">&lt;main&gt;
+  &lt;div class=&quot;block focused&quot; data-snc-modifer=&quot;green&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;block&quot; data-snc-modifer=&quot;green&quot;&gt;&lt;/div&gt;
+&lt;/main&gt;</code>
+</code></pre>
+<p>The custom data attribute is copied to the cursor element, so you can extend the style like below.</p>
+<pre><code class="lang-css"><code class="source-code prettyprint">[data-snc-modifer=&quot;green&quot;].__spatial-navigation-cursor__ {
+  outline-color: green;
+}</code>
+</code></pre>
+<h3 id="untracking">Untracking</h3><p>By default, when the cursor moves to a focused element, the cursor manager automatically scroll the window to track the element.  Sometimes you do not want the manager to scroll the window for a specific element.  For example, you do not want window scrolling for a position-fixed element.</p>
+<p>You can disable tracking motion by setting <code>&quot;false&quot;</code> to an element&apos;s <code>data-snc-tracked</code> attribute.</p>
+<pre><code class="lang-html"><code class="source-code prettyprint">&lt;main style=&quot;position: fixed&quot;&gt;
+  &lt;div class=&quot;block focused&quot; data-snc-tracked=&quot;false&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;block&quot; data-snc-tracked=&quot;false&quot;&gt;&lt;/div&gt;
+&lt;/main&gt;</code>
+</code></pre>
 <h2 id="api-document">API document</h2><p>API document is <a href="https://ygoto3.github.io/spatial-navigation-cursor/class/spatial-navigation-cursor/index.js~CursorManager.html">here</a>.</p>
 </div>
 </div>

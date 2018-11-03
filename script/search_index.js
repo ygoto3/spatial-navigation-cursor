@@ -144,6 +144,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "spatial-navigation-cursor/index.js~cursormanager#resize",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-resize",
+    "spatial-navigation-cursor/index.js~CursorManager#resize",
+    "method"
+  ],
+  [
     "spatial-navigation-cursor/index.js~cursormanager#resizecursorto_",
     "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-resizeCursorTo_",
     "spatial-navigation-cursor/index.js~CursorManager#resizeCursorTo_",
@@ -195,6 +201,12 @@ window.esdocSearchIndex = [
     "spatial-navigation-cursor/index.js~cursormanager#trigger_",
     "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-trigger_",
     "spatial-navigation-cursor/index.js~CursorManager#trigger_",
+    "method"
+  ],
+  [
+    "spatial-navigation-cursor/index.js~cursormanager#updatecursormodifier_",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-updateCursorModifier_",
+    "spatial-navigation-cursor/index.js~CursorManager#updateCursorModifier_",
     "method"
   ],
   [
