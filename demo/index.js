@@ -360,7 +360,7 @@ export default class CursorManager {
         this.trigger_(CursorManager.Events.FOCUS_UPDATED, new CustomEvent(CursorManager.Events.FOCUS_UPDATED, {
           detail: { target },
         }));
-      } else {
+      } else if ( !this.checkFocusedElementExistence_() ) {
         this.hideCursor_();
       }
     });
@@ -390,6 +390,19 @@ export default class CursorManager {
     this.eventListeners_
       .filter(l => l.type === type)
       .forEach(l => l.listener(...args));
+  }
+
+  /**
+   * Check if the current focused element exists
+   * @access private
+   * @return {boolean} whether the focused element exists
+   */
+  checkFocusedElementExistence_()/*: boolean*/ {
+    return (
+      !!this.focused_ &&
+      this.focused_.classList.contains(this.focusClassName_) &&
+      isInDocumentBody(this.focused_)
+    );
   }
 }
 

@@ -30,6 +30,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "spatial-navigation-cursor/index.js~cursormanager#checkfocusedelementexistence_",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-checkFocusedElementExistence_",
+    "spatial-navigation-cursor/index.js~CursorManager#checkFocusedElementExistence_",
+    "method"
+  ],
+  [
     "spatial-navigation-cursor/index.js~cursormanager#constructor",
     "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-constructor-constructor",
     "spatial-navigation-cursor/index.js~CursorManager#constructor",
