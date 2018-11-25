@@ -10,7 +10,7 @@ type cursorManager$Rect = {
 
 export type spatialNavigationCursor$EventListener = {
   type: string;
-  listener: spatialNavigationCursor$EventHandler;
+  listener: EventHandler;
 };
 
 export class spatialNavigationCursor$FocusUpdatedEvent extends CustomEvent {
@@ -19,10 +19,10 @@ export class spatialNavigationCursor$FocusUpdatedEvent extends CustomEvent {
   };
 }
 
-export type spatialNavigationCursor$EventHandler = (event: spatialNavigationCursor$FocusUpdatedEvent) => mixed;
-
 export type spatialNavigationCursor$Events = {
   FOCUS_UPDATED: 'focusUpdated';
+  CURSOR_TRANSITIONSTART: 'cursorTransitionstart';
+  CURSOR_TRANSITIONEND: 'cursorTransitionend';
 };
 
 type Dimension = {
@@ -42,6 +42,8 @@ export default class CursorManager {
   viewHeight_: number;
   observer_: ?MutationObserver;
   eventListeners_: spatialNavigationCursor$EventListener[];
+  onTransitionStart_: EventHandler;
+  onTransitionEnd_: EventHandler;
   */
 
   /**
@@ -100,6 +102,9 @@ export default class CursorManager {
      * @access private
      */
     this.eventListeners_ = [];
+
+    this.onTransitionStart_ = this.onTransitionStart_.bind(this);
+    this.onTransitionEnd_ = this.onTransitionEnd_.bind(this);
   }
 
   /**
@@ -109,6 +114,7 @@ export default class CursorManager {
     this.styleCursor_();
     this.appendToRoot_();
     this.observeFocus_();
+    this.listenToCursorEvents_();
     this.focus();
   }
 
@@ -221,7 +227,7 @@ export default class CursorManager {
    * @param {string} type an event type
    * @param {Function} listener an evnet handler 
    */
-  addEventListener(type/*: string*/, listener/*: spatialNavigationCursor$EventHandler*/) {
+  addEventListener(type/*: string*/, listener/*: EventHandler*/) {
     this.eventListeners_.push({ type, listener });
   }
 
@@ -230,7 +236,7 @@ export default class CursorManager {
    * @param {string} type an event type
    * @param {Function} listener an evnet handler 
    */
-  removeEventListener(type/*: string*/, listener/*: spatialNavigationCursor$EventHandler*/) {
+  removeEventListener(type/*: string*/, listener/*: EventHandler*/) {
     const idx = this.eventListeners_.findIndex(l => l.type === type && l.listener === listener);
     if (~idx) {
       this.eventListeners_.splice(idx, 1);
@@ -295,6 +301,22 @@ export default class CursorManager {
     this.cursor_.style.top = '0';
     this.cursor_.style.left = '0';
     this.hideCursor_();
+  }
+
+  /**
+   * Listen to the cursor's event
+   * @access private
+   */
+  listenToCursorEvents_() {
+    this.cursor_.addEventListener('transitionend', this.onTransitionStart_);
+  }
+
+  /**
+   * Unlisten to the cursor's event
+   * @access private
+   */
+  unlistenToCursorEvents_() {
+    this.cursor_.removeEventListener('transitionend', this.onTransitionEnd_);
   }
 
   /**
@@ -404,10 +426,32 @@ export default class CursorManager {
       isInDocumentBody(this.focused_)
     );
   }
+
+  /**
+   * Event handler fro transition start
+   * @access private
+   * @param {Event} e an event
+   * @return {*} any value
+   */
+  onTransitionStart_(e/*: Event*/)/*: mixed*/ {
+    this.trigger_(CursorManager.Events.CURSOR_TRANSITIONSTART, e);
+  }
+
+  /**
+   * Event handler fro transition end
+   * @access private
+   * @param {Event} e an event
+   * @return {*} any value
+   */
+  onTransitionEnd_(e/*: Event*/)/*: mixed*/ {
+    this.trigger_(CursorManager.Events.CURSOR_TRANSITIONEND, e);
+  }
 }
 
 CursorManager.Events = {
   FOCUS_UPDATED: 'focusUpdated',
+  CURSOR_TRANSITIONSTART: 'cursorTransitionstart',
+  CURSOR_TRANSITIONEND: 'cursorTransitionend',
 };
 
 /**
@@ -428,7 +472,9 @@ function getAbsoluteElementRect(elem/*: HTMLElement*/)/* cursorManager$Rect*/ {
 function isInDocumentBody(element/*: ?HTMLElement*/)/*: boolean*/ {
   if (!element) return false;
   if (element === document.body) return true;
-  if (!element.offsetParent) return false;
+  if (getComputedStyle(element).position === 'fixed') {
+    return isInDocumentBody((element.parentElement/*: any*/));
+  } else if (!element.offsetParent) return false;
   return isInDocumentBody((element.offsetParent/*: any*/));
 }
 

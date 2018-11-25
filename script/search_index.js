@@ -108,6 +108,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "spatial-navigation-cursor/index.js~cursormanager#listentocursorevents_",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-listenToCursorEvents_",
+    "spatial-navigation-cursor/index.js~CursorManager#listenToCursorEvents_",
+    "method"
+  ],
+  [
     "spatial-navigation-cursor/index.js~cursormanager#move",
     "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-move",
     "spatial-navigation-cursor/index.js~CursorManager#move",
@@ -130,6 +136,18 @@ window.esdocSearchIndex = [
     "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-member-observer_",
     "spatial-navigation-cursor/index.js~CursorManager#observer_",
     "member"
+  ],
+  [
+    "spatial-navigation-cursor/index.js~cursormanager#ontransitionend_",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-onTransitionEnd_",
+    "spatial-navigation-cursor/index.js~CursorManager#onTransitionEnd_",
+    "method"
+  ],
+  [
+    "spatial-navigation-cursor/index.js~cursormanager#ontransitionstart_",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-onTransitionStart_",
+    "spatial-navigation-cursor/index.js~CursorManager#onTransitionStart_",
+    "method"
   ],
   [
     "spatial-navigation-cursor/index.js~cursormanager#place",
@@ -207,6 +225,12 @@ window.esdocSearchIndex = [
     "spatial-navigation-cursor/index.js~cursormanager#trigger_",
     "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-trigger_",
     "spatial-navigation-cursor/index.js~CursorManager#trigger_",
+    "method"
+  ],
+  [
+    "spatial-navigation-cursor/index.js~cursormanager#unlistentocursorevents_",
+    "class/spatial-navigation-cursor/index.js~CursorManager.html#instance-method-unlistenToCursorEvents_",
+    "spatial-navigation-cursor/index.js~CursorManager#unlistenToCursorEvents_",
     "method"
   ],
   [
