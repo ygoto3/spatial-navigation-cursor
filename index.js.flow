@@ -13,8 +13,8 @@ declare export default class CursorManager {
   place(): void;
   start(): void;
   stop(): void;
-  addEventListener(type: string, listener: spatialNavigationCursor$EventHandler): void;
-  removeEventListener(type: string, listener: spatialNavigationCursor$EventHandler): void;
+  addEventListener(type: string, listener: EventHandler): mixed;
+  removeEventListener(type: string, listener: EventHandler): mixed;
 }
 
 export type spatialNavigationCursor$EventListener = {
