@@ -308,7 +308,8 @@ export default class CursorManager {
    * @access private
    */
   listenToCursorEvents_() {
-    this.cursor_.addEventListener('transitionend', this.onTransitionStart_);
+    this.cursor_.addEventListener('transitionstart', this.onTransitionStart_);
+    this.cursor_.addEventListener('transitionend', this.onTransitionEnd_);
   }
 
   /**
@@ -316,6 +317,7 @@ export default class CursorManager {
    * @access private
    */
   unlistenToCursorEvents_() {
+    this.cursor_.removeEventListener('transitionstart', this.onTransitionStart_);
     this.cursor_.removeEventListener('transitionend', this.onTransitionEnd_);
   }
 
