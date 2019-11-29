@@ -472,9 +472,6 @@ function getAbsoluteElementRect(elem/*: HTMLElement*/)/* cursorManager$Rect*/ {
 function isInDocumentBody(element/*: ?HTMLElement*/)/*: boolean*/ {
   if (!element) return false;
   if (element === document.body) return true;
-  if (getComputedStyle(element).position === 'fixed') {
-    return isInDocumentBody((element.parentElement/*: any*/));
-  } else if (!element.offsetParent) return false;
   return isInDocumentBody((element.offsetParent/*: any*/));
 }
 
